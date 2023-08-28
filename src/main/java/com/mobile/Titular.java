@@ -41,7 +41,7 @@ public class Titular {
             List<Conta> contasParaRemover = titularParaExcluir.contas;
             for (Conta conta : contasParaRemover) {
                 conta.setTitular(null);
-                Conta.excluirConta(conta.getId());
+                Conta.excluirConta(conta.getNumero());
             }
         }
     }

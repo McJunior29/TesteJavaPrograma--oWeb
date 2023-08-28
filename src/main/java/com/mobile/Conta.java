@@ -85,7 +85,7 @@ public class Conta {
         }
     }
 
-    public static void excluirConta(int id) {
+    public static void excluirConta(String id) {
         contas.remove(id);
     }
 

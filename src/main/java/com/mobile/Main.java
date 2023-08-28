@@ -38,7 +38,9 @@ public class Main {
                     menuConta(contas);
                     break;
                 case 4:
+                    scanner.close();
                     System.out.println("Saindo do programa. Obrigado!");
+                    System.exit(0);
                     break;
                 default:
                     System.out.println("Opção inválida. Por favor, escolha novamente.");
@@ -79,8 +81,13 @@ public class Main {
                 case 4:
                     realizarOperacao(contas, numero, Operacao.TRANSFERIR);
                     break;
+                case 5:
+                    realizarOperacao(contas, numero, Operacao.DELETAR);
+                    break;
                 case 0:
+                    scanner.close();
                     System.out.println("Saindo do programa. Obrigado!");
+                    System.exit(0);
                     break;
                 default:
                     System.out.println("Opção inválida. Por favor, escolha novamente.");
@@ -124,12 +131,23 @@ public class Main {
                         System.out.println("Conta de destino não encontrada.");
                     }
                     break;
+                case DELETAR:
+                    deletarConta(conta);
             }
         } else {
             System.out.println("Conta não encontrada.");
         }
     }
 
+    private static void deletarConta(Conta conta){
+        Conta contaModel = conta;
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Deseja realmenete apagar a conta? (S/N)");
+        String resposta = scanner.next();
+            if (resposta.equalsIgnoreCase("S")) {
+                conta.excluirConta(conta.getNumero());
+            }
+    }
     private static void criarConta(Map<String, Conta> contas, Banco banco) {
         Scanner scanner = new Scanner(System.in);
 
@@ -184,6 +202,7 @@ public class Main {
         VERIFICAR_SALDO,
         DEPOSITAR,
         SACAR,
-        TRANSFERIR
+        TRANSFERIR,
+        DELETAR
     }
 }
