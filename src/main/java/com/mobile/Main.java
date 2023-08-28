@@ -10,13 +10,13 @@ public class Main {
         Banco banco = new Banco();
 
         Scanner scanner = new Scanner(System.in);
-        Map<Integer, Account> accounts = new HashMap<>();
-        Map<Integer, Holder> holders = new HashMap<>();
+        Map<String, Conta> contas = new HashMap<>();
+        Map<Integer, Titular> titulares = new HashMap<>();
 
         int escolha;
         double valor;
 
-        do{
+        do {
             System.out.println("============");
             System.out.println("Menu Inicial");
             System.out.println("============");
@@ -28,14 +28,14 @@ public class Main {
 
             switch (escolha) {
                 case 1:
-                    createdHolder(holders,banco);
+                    criarTitular(titulares, banco);
                     break;
                 case 2:
-                    listarContas(accounts);
-                    createdAccount(accounts,banco);
+                    listarContas(contas);
+                    criarConta(contas, banco);
                     break;
                 case 3:
-                    menuConta(accounts);
+                    menuConta(contas);
                     break;
                 case 4:
                     System.out.println("Saindo do programa. Obrigado!");
@@ -43,20 +43,18 @@ public class Main {
                 default:
                     System.out.println("Opção inválida. Por favor, escolha novamente.");
             }
-        }while (escolha != 4);
+        } while (escolha != 4);
 
     }
 
-
-
-    private static void menuConta(Map<Integer, Account> accountsModel){
+    private static void menuConta(Map<String, Conta> contasModel) {
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("Numero da conta:");
-        int number = scanner.nextInt();
-        
+        System.out.println("Número da conta:");
+        String numero = scanner.nextLine();
+
         int escolha;
-        Map<Integer, Account> accounts = accountsModel;
+        Map<String, Conta> contas = contasModel;
 
         do {
             System.out.println("Menu do Banco");
@@ -70,16 +68,16 @@ public class Main {
 
             switch (escolha) {
                 case 1:
-                    realizarOperacao(accounts, number, Operacao.VERIFICAR_SALDO);
+                    realizarOperacao(contas, numero, Operacao.VERIFICAR_SALDO);
                     break;
                 case 2:
-                    realizarOperacao(accounts, number, Operacao.DEPOSITAR);
+                    realizarOperacao(contas, numero, Operacao.DEPOSITAR);
                     break;
                 case 3:
-                    realizarOperacao(accounts, number, Operacao.SACAR);
+                    realizarOperacao(contas, numero, Operacao.SACAR);
                     break;
                 case 4:
-                    realizarOperacao(accounts, number, Operacao.TRANSFERIR);
+                    realizarOperacao(contas, numero, Operacao.TRANSFERIR);
                     break;
                 case 0:
                     System.out.println("Saindo do programa. Obrigado!");
@@ -89,15 +87,15 @@ public class Main {
             }
         } while (escolha != 0);
     }
-    
-    private static void realizarOperacao(Map<Integer, Account> accounts,int idConta, Operacao operacao) {
+
+    private static void realizarOperacao(Map<String, Conta> contas, String numeroConta, Operacao operacao) {
         Scanner scanner = new Scanner(System.in);
-        Account conta = accounts.get(idConta);
+        Conta conta = contas.get(numeroConta);
 
         if (conta != null) {
             switch (operacao) {
                 case VERIFICAR_SALDO:
-                    System.out.println(conta.verSaldo());
+                    System.out.println(conta.getValor());
                     break;
                 case DEPOSITAR:
                     System.out.print("Digite o valor a ser depositado: ");
@@ -113,10 +111,10 @@ public class Main {
                     System.out.println("Saldo atual: " + conta.getValor());
                     break;
                 case TRANSFERIR:
-                    System.out.print("Digite o ID da conta de destino: ");
-                    int idContaDestino = scanner.nextInt();
-                    Account contaDestino = accounts.get(idContaDestino);
-                
+                    System.out.print("Digite o número da conta de destino: ");
+                    String numeroContaDestino = scanner.nextLine();
+                    Conta contaDestino = contas.get(numeroContaDestino);
+
                     if (contaDestino != null) {
                         System.out.print("Digite o valor a ser transferido: ");
                         double valorTransferencia = scanner.nextDouble();
@@ -126,26 +124,24 @@ public class Main {
                         System.out.println("Conta de destino não encontrada.");
                     }
                     break;
-                }
-            } else {
-                System.out.println("Conta não encontrada.");
             }
-
-
+        } else {
+            System.out.println("Conta não encontrada.");
+        }
     }
 
-    private static void createdAccount(Map<Integer, Account> accounts,Banco banco) {
+    private static void criarConta(Map<String, Conta> contas, Banco banco) {
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("ID do Titular:");
-        int idHolder = scanner.nextInt();
+        int idTitular = scanner.nextInt();
 
-        Holder holder = new Holder();
-        holder = holder.searchHolder(idHolder);
+        Titular titular = new Titular();
+        titular = titular.buscarTitular(idTitular);
 
-        if (holder != null) {
-            Account novaConta = new Account(0,holder);
-            accounts.put(novaConta.getId(), novaConta);
+        if (titular != null) {
+            Conta novaConta = new Conta(0, titular);
+            contas.put(novaConta.getNumero(), novaConta);
             banco.adicionarConta(novaConta);
 
             System.out.println("Deseja fazer um depósito inicial? (S/N)");
@@ -157,33 +153,33 @@ public class Main {
                 System.out.println("Depósito realizado. Saldo atual: " + novaConta.getValor());
             }
 
-            System.out.println("Conta criada com sucesso. ID: " + novaConta.getId());
+            System.out.println("Conta criada com sucesso. Número: " + novaConta.getNumero());
         } else {
-            System.out.println("Titular não encontrado.Cadastre ou insira um ID válido.");
+            System.out.println("Titular não encontrado. Cadastre ou insira um ID válido.");
         }
     }
 
-    private static void createdHolder(Map<Integer, Holder> holders, Banco banco){
+    private static void criarTitular(Map<Integer, Titular> titulares, Banco banco) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Nome:");
         String nome = scanner.nextLine();
         System.out.println("Telefone de contato:");
-        String phone = scanner.next();
-        Holder newHolder = new Holder(nome, phone);
-        holders.put(newHolder.getId(), newHolder);
-        banco.adicionarTitular(newHolder);
+        String telefone = scanner.next();
+        Titular novoTitular = new Titular(nome, telefone);
+        titulares.put(novoTitular.getId(), novoTitular);
+        banco.adicionarTitular(novoTitular);
         System.out.println("Titular cadastrado com sucesso!");
-
     }
 
-    private static void listarContas(Map<Integer, Account> accounts) {
+    private static void listarContas(Map<String, Conta> contas) {
         System.out.println(" ----------------\n Lista de Contas:\n ----------------");
-        for (Map.Entry<Integer, Account> entry : accounts.entrySet()) {
-            int id = entry.getKey();
-            Account conta = entry.getValue();
-            System.out.println("\n Nome: " + conta.getHolder().getName() + ", Numero: " + conta.getNumber() +", Agencia: "+ Account.getAgency()+"\n------------------------\n");
+        for (Map.Entry<String, Conta> entry : contas.entrySet()) {
+            String numero = entry.getKey();
+            Conta conta = entry.getValue();
+            System.out.println("\n Nome: " + conta.getTitular().getNome() + ", Número: " + conta.getNumero() + ", Agência: " + Conta.getAgencia() + "\n------------------------\n");
         }
     }
+
     private enum Operacao {
         VERIFICAR_SALDO,
         DEPOSITAR,
